@@ -3,7 +3,7 @@
 
 > A production-ready Power BI dashboard for treasury teams to monitor FX exposure, hedge effectiveness, and risk (VaR) across 5 currency pairs — built with free tools only.
 
-![Page 1 Overview](screenshots/page1_overview.png)
+
 
 ---
 
@@ -23,7 +23,7 @@
 ## Dashboard Pages
 
 ### Page 1 — Overview
-![Overview](screenshots/page1_overview.png)
+
 - **4 KPI Cards**: Net Exposure, Hedge Ratio, VaR 95%, Limit Breach Count
 - **Treemap / Bar**: Net exposure by currency (absolute values)
 - **Gauge**: Coverage % vs 80% benchmark target
@@ -31,13 +31,13 @@
 - **Maturity Profile**: Exposure bucketed by 0–30d, 30–90d, 90–180d, 180–365d
 
 ### Page 2 — Drill-Through: Subsidiary & Counterparty
-![Drill-Through](screenshots/page2_drillthrough.png)
+
 - **Heatmap Matrix**: Net exposure per Subsidiary × Currency pair
 - **Waterfall Chart**: Long positions → Short positions → Hedges → Net
 - **Counterparty Breach Bars**: Utilization vs $100M limit; all 3 banks flagged as breach
 
 ### Page 3 — Risk: VaR & Volatility
-![Risk](screenshots/page3_risk.png)
+
 - **MC P&L Histogram**: 1,000 simulations; tail highlighted in red below VaR 95%
 - **Implied Vol Chart**: 1M vs 3M vol by currency pair
 - **Scenario Comparison**: VaR 95%/99% across Base / Stress / Shock
@@ -145,7 +145,7 @@ BankC Limit Utilization = DIVIDE(ABS([BankC Exposure]), 100000000, 0)
 - Set **drill-through**: right-click subsidiary in Page 1 → drill to Page 2
 - Export: **File → Export → PDF** for snapshot; or publish to Power BI Service (free)
 
----
+
 
 ## Key Metrics Explained
 
@@ -157,11 +157,8 @@ BankC Limit Utilization = DIVIDE(ABS([BankC Exposure]), 100000000, 0)
 
 **Net Exposure** = Σ Long positions + Σ Short positions (signed sum)
 
----
 
 ## Skills Demonstrated
-
-> Built for FX treasury risk management roles (e.g. Keridion Capital, hedge funds, bank treasury desks)
 
 - **Power BI**: DAX, Power Query M, Python visuals, star schema, bookmarks, drill-through
 - **Financial domain**: FX forwards, implied vol, delta sensitivity, hedge ratios, VaR methodology
