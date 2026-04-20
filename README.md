@@ -1,3 +1,4 @@
+
 # FX Exposure & Hedging Analytics Dashboard
 
 > A production-ready Power BI dashboard for treasury teams to monitor FX exposure, hedge effectiveness, and risk (VaR) across 5 currency pairs — built with free tools only.
@@ -43,31 +44,6 @@
 
 ---
 
-## Repo Structure
-
-```
-fx-hedging-dashboard/
-├── data/
-│   ├── fx_exposures.csv          # 1,000 synthetic trades
-│   ├── ecb_forwards.csv          # 12-month forward rates + implied vols (5 CCY pairs)
-│   ├── var_results.csv           # Pre-computed VaR per scenario
-│   ├── mc_paths.csv              # 1,000 MC simulation paths
-│   └── counterparty_limits.csv   # Counterparty exposure vs limits
-├── powerbi/
-│   ├── dax_measures.dax          # All 25+ DAX measures, paste into Power BI
-│   ├── power_query_M_code.m      # M queries for all 4 tables
-│   └── fx_treasury_theme.json    # Dark blue finance theme
-├── python/
-│   └── python_visuals_powerbi.py # 3 Python visuals (paste into Power BI Python visual)
-├── screenshots/
-│   ├── page1_overview.png
-│   ├── page2_drillthrough.png
-│   └── page3_risk.png
-├── setup.py                      # Run first: generates all /data CSV files
-└── README.md
-```
-
----
 
 ## Quick Start (15 minutes)
 
@@ -171,42 +147,6 @@ BankC Limit Utilization = DIVIDE(ABS([BankC Exposure]), 100000000, 0)
 
 ---
 
-## Data Dictionary
-
-### fx_exposures.csv
-| Column | Type | Description |
-|---|---|---|
-| TradeID | int | Unique trade identifier |
-| Currency | str | Currency pair (e.g. EURUSD) |
-| Subsidiary | str | Entity: Europe / Asia / Americas / UK |
-| Counterparty | str | BankA / BankB / BankC |
-| Notional | float | Trade notional in USD |
-| Direction | str | Long / Short |
-| Maturity_Days | int | Days to maturity |
-| Type | str | Spot / Forward / Swap |
-| Exposure | float | Signed notional (positive=long, negative=short) |
-| Hedgeable | float | 80% of exposure if maturity < 90 days, else 0 |
-
-### ecb_forwards.csv
-| Column | Type | Description |
-|---|---|---|
-| Date | date | Month-end date |
-| Currency | str | Currency pair |
-| Spot_Rate | float | Spot FX rate |
-| Forward_1M/3M/6M | float | Forward rate at tenor |
-| Implied_Vol_1M/3M | float | Black-Scholes implied volatility |
-
-### var_results.csv
-| Column | Type | Description |
-|---|---|---|
-| Scenario | str | Base / Stress / Shock+10% |
-| VaR_95 | float | 5th percentile P&L across 1,000 sims |
-| VaR_99 | float | 1st percentile P&L |
-| Expected_Loss | float | Mean simulated P&L |
-| Worst_Loss | float | Minimum simulated P&L |
-
----
-
 ## Key Metrics Explained
 
 **Hedge Ratio** = Hedgeable Exposure / |Net Exposure| — target ≥ 80%
@@ -230,5 +170,3 @@ BankC Limit Utilization = DIVIDE(ABS([BankC Exposure]), 100000000, 0)
 - **Risk metrics**: VaR 95/99%, scenario analysis, counterparty limit monitoring
 
 ---
-
-*Data is fully synthetic. Generated for portfolio demonstration purposes.*
