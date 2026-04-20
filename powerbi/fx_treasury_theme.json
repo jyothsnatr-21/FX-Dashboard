@@ -1,0 +1,36 @@
+{
+  "name": "FX Treasury Dark",
+  "dataColors": [
+    "#3a7bd5",
+    "#1a9e6e",
+    "#ff8c00",
+    "#ff4b4b",
+    "#9b59b6",
+    "#00c9c9"
+  ],
+  "background": "#0d1b2a",
+  "foreground": "#e8eef4",
+  "tableAccent": "#3a7bd5",
+  "textClasses": {
+    "label": {
+      "fontFace": "Segoe UI",
+      "color": "#8ab4d4",
+      "fontSize": 11
+    },
+    "callout": {
+      "fontFace": "Segoe UI",
+      "color": "#3a7bd5",
+      "fontSize": 26
+    },
+    "title": {
+      "fontFace": "Segoe UI",
+      "color": "#e8eef4",
+      "fontSize": 14
+    },
+    "header": {
+      "fontFace": "Segoe UI",
+      "color": "#e8eef4",
+      "fontSize": 12
+    }
+  }
+}

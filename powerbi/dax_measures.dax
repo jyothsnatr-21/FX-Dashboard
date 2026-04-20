@@ -1,0 +1,151 @@
+
+// =============================================
+// DAX MEASURES — FX Exposure & Hedging Dashboard
+// =============================================
+// Paste each measure into: Power BI > Modeling > New Measure
+
+// ---- EXPOSURE MEASURES ----
+
+Net Exposure = 
+    SUM(fx_exposures[Exposure])
+
+Net Exposure Abs = 
+    ABS([Net Exposure])
+
+Total Notional = 
+    SUM(fx_exposures[Notional])
+
+Long Exposure = 
+    CALCULATE(SUM(fx_exposures[Exposure]), fx_exposures[Direction] = "Long")
+
+Short Exposure = 
+    CALCULATE(SUM(fx_exposures[Exposure]), fx_exposures[Direction] = "Short")
+
+Trade Count = 
+    COUNTROWS(fx_exposures)
+
+
+// ---- HEDGING MEASURES ----
+
+Total Hedgeable = 
+    SUM(fx_exposures[Hedgeable])
+
+Hedge Ratio = 
+    DIVIDE(
+        [Total Hedgeable],
+        [Net Exposure Abs],
+        0
+    )
+
+Hedge Ratio % = 
+    FORMAT([Hedge Ratio], "0.00%")
+
+Benchmark Coverage = 
+    0.8    // 80% target — change to a What-If parameter if desired
+
+Coverage Gap = 
+    [Benchmark Coverage] - ABS([Hedge Ratio])
+
+Is Below Benchmark = 
+    IF(ABS([Hedge Ratio]) < [Benchmark Coverage], "⚠ Below Target", "✓ On Target")
+
+
+// ---- SCENARIO MEASURES (driven by Scenario slicer) ----
+
+Scenario Multiplier = 
+    SWITCH(
+        SELECTEDVALUE(Scenario[Scenario], "Base"),
+        "Base",      1.0,
+        "Stress",    1.5,
+        "Shock+10%", 1.1,
+        1.0
+    )
+
+Scenario Net Exposure = 
+    [Net Exposure] * [Scenario Multiplier]
+
+Scenario VaR 95 = 
+    SWITCH(
+        SELECTEDVALUE(Scenario[Scenario], "Base"),
+        "Base",      CALCULATE(MIN(var_results[VaR_95]), var_results[Scenario]="Base"),
+        "Stress",    CALCULATE(MIN(var_results[VaR_95]), var_results[Scenario]="Stress"),
+        "Shock+10%", CALCULATE(MIN(var_results[VaR_95]), var_results[Scenario]="Shock+10%"),
+        CALCULATE(MIN(var_results[VaR_95]), var_results[Scenario]="Base")
+    )
+
+Scenario VaR 99 = 
+    SWITCH(
+        SELECTEDVALUE(Scenario[Scenario], "Base"),
+        "Base",      CALCULATE(MIN(var_results[VaR_99]), var_results[Scenario]="Base"),
+        "Stress",    CALCULATE(MIN(var_results[VaR_99]), var_results[Scenario]="Stress"),
+        "Shock+10%", CALCULATE(MIN(var_results[VaR_99]), var_results[Scenario]="Shock+10%"),
+        CALCULATE(MIN(var_results[VaR_99]), var_results[Scenario]="Base")
+    )
+
+
+// ---- COUNTERPARTY BREACH MEASURES ----
+
+BankC Exposure = 
+    CALCULATE(
+        SUM(fx_exposures[Exposure]),
+        fx_exposures[Counterparty] = "BankC"
+    )
+
+BankC Limit Utilization = 
+    DIVIDE(ABS([BankC Exposure]), 100000000, 0)
+
+Limit Breach Count = 
+    COUNTROWS(
+        FILTER(
+            counterparty_limits,
+            counterparty_limits[Total_Exposure] > counterparty_limits[Limit]
+        )
+    )
+
+Counterparty Breach Flag = 
+    IF([BankC Limit Utilization] > 1, "🔴 BREACH", "🟢 Within Limit")
+
+
+// ---- FORWARD RATE MEASURES ----
+
+Avg Implied Vol 1M = 
+    AVERAGE(ecb_forwards[Implied_Vol_1M])
+
+Avg Forward Spread 3M = 
+    AVERAGE(ecb_forwards[Fwd_Spread_3M])
+
+Latest Spot Rate = 
+    CALCULATE(
+        MAX(ecb_forwards[Spot_Rate]),
+        LASTDATE(ecb_forwards[Date])
+    )
+
+
+// ---- WATERFALL COMPONENTS (Page 2) ----
+
+Long Positions Total = 
+    CALCULATE(SUM(fx_exposures[Exposure]), fx_exposures[Direction]="Long")
+
+Short Positions Total = 
+    CALCULATE(SUM(fx_exposures[Exposure]), fx_exposures[Direction]="Short")
+
+Hedges Applied = 
+    [Total Hedgeable]
+
+Net After Hedging = 
+    [Net Exposure] - [Total Hedgeable]
+
+
+// ---- KPI CARDS ----
+
+KPI Net Exposure M = 
+    FORMAT([Net Exposure] / 1000000, "$#,##0.0") & "M"
+
+KPI Hedge Ratio Label = 
+    FORMAT(ABS([Hedge Ratio]), "0.0%") & " hedged"
+
+KPI VaR Label = 
+    FORMAT([Scenario VaR 95] / 1000000, "$#,##0.0") & "M VaR 95%"
+
+KPI Breach Status = 
+    FORMAT([Limit Breach Count], "0") & " counterparty breach(es)"

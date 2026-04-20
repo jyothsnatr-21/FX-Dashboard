@@ -1,0 +1,4 @@
+Counterparty,Total_Exposure,Limit,Breach
+BankA,326318395.75,100000000,True
+BankB,-905171635.36,100000000,True
+BankC,-349502262.67,100000000,True
